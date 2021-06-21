@@ -2,36 +2,46 @@ import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 
 export const lightTheme = {
-  bgColor: "#E0E3DA",
-  fontColor: "#566270",
-  activeColor: "#548687",
-  borderColor: "#548687",
-  darkButtonColor: "#f53b57",
+  bgColor: "#fffcf5",
+  fontColor: "#014127",
+  activeColor: "#014127",
+  borderColor: "#014127",
+  darkButtonColor: "#FF4500",
   login: {
-    lCardBgColor: "#548687",
-    rCardBgColor: "#E0E3DA",
-    lCardFontColor: "#E0E3DA",
-    rCardFontColor: "#548687",
-    btnBgColor: "#548687",
-    btnFontColor: "#E0E3DA",
+    lCardBgColor: "#014127",
+    rCardBgColor: "#fffcf5",
+    CardFontColor: "#fffcf5",
+    btnBgColor: "#014127",
+    disableBtnBgColor: "rgba(1, 65, 39,0.5)",
+    btnFontColor: "#fffcf5",
+    disableBtnFontColor: "rgba(255, 252, 245,0.3)",
     shadowColor: "rgba(75,92,84,1)",
+  },
+  home: {
+    cardHeaderBgColor: "#014127",
+    cardHeaderFontColor: "#fffcf5",
   },
 };
 
 export const darkTheme = {
-  bgColor: "#282c36",
-  fontColor: "#E0E3DA",
-  activeColor: "#548687",
-  borderColor: "#4834d4",
+  bgColor: "#2C2F32",
+  fontColor: "#fffcf5",
+  activeColor: "#014127",
+  borderColor: "#4b3b76",
   darkButtonColor: "#fed330",
   login: {
-    lCardBgColor: "#2c2c54",
-    rCardBgColor: "#282c36",
-    lCardFontColor: "#E0E3DA",
-    rCardFontColor: "#E0E3DA",
-    btnBgColor: "#4834d4",
-    btnFontColor: "#E0E3DA",
+    lCardBgColor: "#4b3b76",
+    rCardBgColor: "#2C2F32",
+    FontColor: "#fffcf5",
+    btnBgColor: "#4b3b76",
+    disableBtnBgColor: "rgba(75, 59, 118,0.5)",
+    disableBtnFontColor: "rgba(255, 252, 245,0.3)",
+    btnFontColor: "#fffcf5",
     shadowColor: "rgba(0,0,0,1)",
+  },
+  home: {
+    cardHeaderBgColor: "#4b3b76",
+    cardHeaderFontColor: "#fffcf5",
   },
 };
 
@@ -42,6 +52,7 @@ export const GlobalStyles = createGlobalStyle`
   }
   button{
     all:unset;
+    cursor:pointer;
   }
   body{
     background-color:${(props) => props.theme.bgColor};

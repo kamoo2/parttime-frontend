@@ -1,14 +1,7 @@
 import { useMutation, useReactiveVar } from "@apollo/client";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router";
 import styled from "styled-components";
-import {
-  disableLoginMode,
-  enableLoginMode,
-  isLoggedInVar,
-  logIn,
-  loginModeVar,
-} from "../apollo";
+
 import AuthBox from "../components/auth/AuthBox";
 import AuthLayout from "../components/auth/AuthLayout";
 import Button from "../components/auth/Button";
@@ -21,15 +14,23 @@ import LeftBox from "../components/auth/LeftBox";
 import ActiveLine from "../components/auth/line/ActiveLine";
 import NoLine from "../components/auth/line/NoLine";
 import RightBox from "../components/auth/RightBox";
-import TitleBox from "../components/auth/TitleBox";
+import TitleBox from "../components/TitleBox";
 import Wrapper from "../components/auth/Wrapper";
-import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
-import { CREATE_ACCOUNT, LOGIN } from "../gql/user";
 import { EmailRegex, PwRegex } from "../regaxs";
+import {
+  disableLoginMode,
+  enableLoginMode,
+  logIn,
+  loginModeVar,
+} from "../apollo/vars";
+import {
+  MUTATION_CREATE_ACCOUNT,
+  MUTATION_LOGIN,
+} from "../apollo/mutation/user";
 
 const LogoName = styled.span`
-  color: ${(props) => props.theme.login.lCardFontColor};
+  color: ${(props) => props.theme.login.CardFontColor};
   transition: all 0.5s ease;
   font-size: 40px;
 `;
@@ -40,15 +41,20 @@ const AuthBtn = styled.button`
   cursor: pointer;
 `;
 
+const LogoImg = styled.img`
+  width: 700px;
+`;
+
 const Auth = () => {
   const loginMode = useReactiveVar(loginModeVar);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
     setError,
     getValues,
+    clearErrors,
   } = useForm({
     mode: "onChange",
   });
@@ -93,12 +99,12 @@ const Auth = () => {
     signupCompleted();
   };
 
-  const [login, { loading: loginLoading }] = useMutation(LOGIN, {
+  const [login, { loading: loginLoading }] = useMutation(MUTATION_LOGIN, {
     onCompleted: LoginOnCompleted,
   });
 
   const [createAccount, { loading: signupLoading }] = useMutation(
-    CREATE_ACCOUNT,
+    MUTATION_CREATE_ACCOUNT,
     {
       onCompleted: SignupOnCompleted,
     }
@@ -159,6 +165,7 @@ const Auth = () => {
       <Container>
         <LeftBox>
           <LogoName>Part Time Management</LogoName>
+          <LogoImg src="/images/logo.png" />
         </LeftBox>
         <RightBox>
           <Wrapper>
@@ -176,11 +183,15 @@ const Auth = () => {
               <TitleBox
                 title="Login"
                 subtitle="Please Login to Your Account."
+                titleSize="25px"
+                subSize="12px"
               />
             ) : (
               <TitleBox
                 title="Sign Up"
                 subtitle="Please Create a New Account"
+                titleSize="25px"
+                subSize="12px"
               />
             )}
 
@@ -193,6 +204,10 @@ const Auth = () => {
                       {...username}
                       type="text"
                       hasError={Boolean(errors?.username?.message)}
+                      onChange={(e) => {
+                        clearErrors("result");
+                        username.onChange(e);
+                      }}
                     />
                     <FormError message={errors?.username?.message} />
                     <FieldName name="Password" />
@@ -200,14 +215,27 @@ const Auth = () => {
                       {...password}
                       type="password"
                       hasError={Boolean(errors?.password?.message)}
+                      onChange={(e) => {
+                        clearErrors("result");
+                        password.onChange(e);
+                      }}
                     />
                     <FormError message={errors?.password?.message} />
-                    <Button type="submit" value="로그인" />
+                    <Button type="submit" value="로그인" disabled={!isValid} />
+                    <FormError message={errors?.result?.message} />
                   </>
                 ) : (
                   <>
                     <FieldName name="Username" />
-                    <Input {...username} type="text" />
+                    <Input
+                      {...username}
+                      type="text"
+                      hasError={Boolean(errors?.username?.message)}
+                      onChange={(e) => {
+                        clearErrors("result");
+                        username.onChange(e);
+                      }}
+                    />
                     <FormError message={errors?.username?.message} />
 
                     <FieldName name="Name" />
@@ -216,17 +244,35 @@ const Auth = () => {
                         required: "name은 필수 사항입니다.",
                       })}
                       type="text"
+                      hasError={Boolean(errors?.name?.message)}
                     />
                     <FormError message={errors?.name?.message} />
 
                     <FieldName name="Email" />
-                    <Input {...email} type="text" />
+                    <Input
+                      {...email}
+                      type="text"
+                      hasError={Boolean(errors?.email?.message)}
+                      onChange={(e) => {
+                        clearErrors("result");
+                        email.onChange(e);
+                      }}
+                    />
                     <FormError message={errors?.email?.message} />
 
                     <FieldName name="Password" />
-                    <Input {...password} type="password" />
+                    <Input
+                      {...password}
+                      type="password"
+                      hasError={Boolean(errors?.password?.message)}
+                    />
                     <FormError message={errors?.password?.message} />
-                    <Button type="submit" value="회원가입" />
+                    <Button
+                      type="submit"
+                      value="회원가입"
+                      disabled={!isValid}
+                    />
+                    <FormError message={errors?.result?.message} />
                   </>
                 )}
               </form>

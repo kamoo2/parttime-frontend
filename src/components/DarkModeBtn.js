@@ -1,7 +1,8 @@
 import { useReactiveVar } from "@apollo/client";
 import styled from "styled-components";
-import { darkModeVar, disableDarkMode, enableDarkMode } from "../apollo";
 import { HiMoon, HiSun } from "react-icons/hi";
+import { darkModeVar, disableDarkMode, enableDarkMode } from "../apollo/vars";
+
 const SDarkModeBtn = styled.button`
   cursor: pointer;
   height: 50px;

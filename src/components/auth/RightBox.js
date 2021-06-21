@@ -7,6 +7,8 @@ const RightBox = styled.div`
   justify-content: center;
   align-items: center;
   transition: all 0.5s ease;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 `;
 
 export default RightBox;

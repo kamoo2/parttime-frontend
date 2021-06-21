@@ -1,10 +1,7 @@
-import { ApolloClient, makeVar } from "@apollo/client";
-import { createUploadLink } from "apollo-upload-client";
-import { setContext } from "@apollo/client/link/context";
-import { InMemoryCache } from "@apollo/client/cache";
-const TOKEN = "TOKEN";
-const DARK_MODE = "DARK_MODE";
-const LOGIN_MODE = "LOGIN_MODE";
+import { makeVar } from "@apollo/client";
+import { DARK_MODE, LOGIN_MODE, TOKEN } from "../constants";
+import routes from "../routes";
+
 export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
 export const darkModeVar = makeVar(Boolean(localStorage.getItem(DARK_MODE)));
 export const loginModeVar = makeVar(true);
@@ -14,9 +11,11 @@ export const logIn = (token) => {
   isLoggedInVar(true);
 };
 
-export const logOut = () => {
+export const logOut = (history) => {
   localStorage.removeItem(TOKEN);
   isLoggedInVar(false);
+  history.replace(routes.home, null);
+  window.location.reload();
 };
 
 export const disableLoginMode = () => {
@@ -38,22 +37,3 @@ export const enableDarkMode = () => {
   localStorage.setItem(DARK_MODE, "enable");
   darkModeVar(true);
 };
-
-const uploadLink = createUploadLink({
-  uri: "http://localhost:4000/graphql",
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem(TOKEN) || "";
-  return {
-    headers: {
-      ...headers,
-      "jwt-token": token ? token : "",
-    },
-  };
-});
-
-export const client = new ApolloClient({
-  link: authLink.concat(uploadLink),
-  cache: new InMemoryCache(),
-});

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const SFormError = styled.span`
-  color: #f53b57;
+  color: #ff4500;
   font-weight: 600;
   font-size: 13px;
   margin-top: 5px;

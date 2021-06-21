@@ -1,15 +1,97 @@
+import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { logOut } from "../apollo";
-import DarkModeBtn from "../components/DarkModeBtn";
+import TitleBox from "../components/TitleBox";
 import PageTitle from "../components/PageTitle";
+import { QUERY_SEE_STORES } from "../apollo/queries/store";
+import { useLazyQuery } from "@apollo/client";
+import StoreCard from "../components/StoreCard";
+import Wrapper from "../components/createStore/Wrapper";
+import { Loader } from "../components/Loader";
+const MainContainer = styled.div`
+  width: 100%;
+`;
 
-const HomeLayout = styled.div``;
+const StoreSection = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 370px;
+`;
+
+const Pagination = styled.div`
+  display: grid;
+  grid-template-rows: repeat(1, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+`;
+
+const Span = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: 2/3;
+`;
 
 const Home = () => {
+  const [page, setPage] = useState(1);
+  const [getAllStores, { data, loading }] = useLazyQuery(QUERY_SEE_STORES, {
+    variables: {
+      page,
+    },
+  });
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted) {
+      getAllStores();
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [getAllStores]);
+  if (loading) {
+    return (
+      <Wrapper>
+        <Loader />
+      </Wrapper>
+    );
+  }
   return (
-    <>
+    <MainContainer>
       <PageTitle title="Home" />
-    </>
+      <Wrapper>
+        <TitleBox
+          title="Part Time Management"
+          subtitle="직원의 급여,정보,근무일정까지 모두 PTMM에서 해결합니다."
+          titleSize="40px"
+          subSize="20px"
+        />
+        <StoreSection>
+          {data &&
+            data.seeAllStores.map((item) => (
+              <StoreCard key={item.id} store={item} />
+            ))}
+        </StoreSection>
+        <Pagination>
+          {page === 1 ? null : (
+            <RiArrowLeftSLine
+              size={30}
+              onClick={() => setPage(page - 1)}
+              style={{ cursor: "pointer", gridColumn: 1 / 2 }}
+            />
+          )}
+          <Span>{page}</Span>
+          {page === data?.seeAllStores[0]?.total_page ? null : (
+            <RiArrowRightSLine
+              size={30}
+              onClick={() => setPage(page + 1)}
+              style={{ cursor: "pointer", gridColumn: 3 / 4 }}
+            />
+          )}
+        </Pagination>
+      </Wrapper>
+    </MainContainer>
   );
 };
 
