@@ -6,6 +6,7 @@ import { Loader, PageLoader } from "../../components/Loader";
 import StoreItem from "../../components/StoreItem";
 import Wrapper from "../../components/createStore/Wrapper";
 import { useEffect } from "react";
+import Comments from "../../components/Comments";
 
 const DetailStore = () => {
   const { id } = useParams();
@@ -13,7 +14,6 @@ const DetailStore = () => {
   const [getStore, { data, seeStoreLoading }] = useLazyQuery(QUERY_SEE_STORE, {
     variables: { id: storeId },
   });
-
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
@@ -31,13 +31,18 @@ const DetailStore = () => {
       </Wrapper>
     );
   }
-
   return (
     <Wrapper>
       <PageTitle title="STORE" />
       {seeStoreLoading && <PageLoader />}
       {!seeStoreLoading && data && data.seeStore?.store && (
-        <StoreItem store={data.seeStore.store} id={storeId} />
+        <>
+          <StoreItem store={data.seeStore.store} id={storeId} />
+          <Comments
+            storeId={storeId}
+            commentCount={data.seeStore.store.commentCount}
+          />
+        </>
       )}
     </Wrapper>
   );

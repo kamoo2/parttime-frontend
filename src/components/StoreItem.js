@@ -29,6 +29,47 @@ const Header = styled.div`
   background-color: ${(props) => props.theme.login.btnBgColor};
 `;
 
+const SubHeader = styled.div`
+  width: 100%;
+  padding: 12px 17px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  font-size: 16px;
+`;
+
+const Category = styled.div`
+  width: 50px;
+  text-align: center;
+  background-color: #686de0;
+  color: #fffcf5;
+  padding: 8px;
+  border-radius: 8px;
+`;
+const Holidays = styled.div`
+  display: flex;
+  grid-column: 2/5;
+`;
+const Rules = styled.div`
+  display: flex;
+  grid-column: 5/8;
+`;
+
+const Holiday = styled.div`
+  background-color: #ff4500;
+  color: #fffcf5;
+  padding: 8px;
+  border-radius: 8px;
+  margin-right: 8px;
+`;
+const Rule = styled.div`
+  background-color: ${(props) => props.theme.login.btnBgColor};
+  color: #fffcf5;
+  padding: 8px;
+  border-radius: 8px;
+  margin-right: 8px;
+`;
+
 const HeaderTitle = styled.h4`
   font-size: 1.8rem;
   color: ${(props) => props.theme.login.btnFontColor};
@@ -158,6 +199,19 @@ const StoreItem = ({ store, id }) => {
           </Button>
         </ButtonBox>
       </Header>
+      <SubHeader>
+        <Category>{store.category.name}</Category>
+        <Holidays>
+          {store.holidays.map((holiday) => {
+            return <Holiday>{holiday.name}</Holiday>;
+          })}
+        </Holidays>
+        <Rules>
+          {store.rules.map((rule) => {
+            return <Rule>{rule.name}</Rule>;
+          })}
+        </Rules>
+      </SubHeader>
       <Body>
         <ReactImageGallery items={images} />
       </Body>

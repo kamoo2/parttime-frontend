@@ -8,9 +8,13 @@ import Wrapper from "../createStore/Wrapper";
 import { Loader } from "../Loader";
 import StoreCard from "../StoreCard";
 
-const StoreSection = styled.div`
+const SPhotos = styled.div`
   width: 100%;
   max-width: 1200px;
+  position: relative;
+`;
+const StoreSection = styled.div`
+  width: 100%;
   display: grid;
   grid-template-rows: repeat(1, 1fr);
   grid-template-columns: repeat(3, 1fr);
@@ -22,7 +26,10 @@ const Pagination = styled.div`
   display: grid;
   grid-template-rows: repeat(1, 1fr);
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 20px;
+  margin-bottom: 20px;
+  position: absolute;
+  top: -35px;
+  left: -30px;
 `;
 
 const Span = styled.span`
@@ -56,13 +63,7 @@ const Photos = ({ username }) => {
     </Wrapper>;
   }
   return (
-    <>
-      <StoreSection>
-        {data?.myStores?.map((item) => (
-          <StoreCard key={item.id} store={item} />
-        ))}
-      </StoreSection>
-
+    <SPhotos>
       {data?.myStores.length === 0 ? null : (
         <Pagination>
           {page === 1 ? null : (
@@ -82,7 +83,12 @@ const Photos = ({ username }) => {
           )}
         </Pagination>
       )}
-    </>
+      <StoreSection>
+        {data?.myStores?.map((item) => (
+          <StoreCard key={item.id} store={item} />
+        ))}
+      </StoreSection>
+    </SPhotos>
   );
 };
 

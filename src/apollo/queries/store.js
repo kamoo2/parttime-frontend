@@ -45,6 +45,7 @@ export const QUERY_SEE_STORE = gql`
         total_month_sail
         today_sail
         total_year_sail
+        commentCount
       }
     }
   }

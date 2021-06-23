@@ -7,9 +7,7 @@ const SPhotos = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
 `;
-const PhotosWrapper = styled.div`
-  width: 100%;
-`;
+
 const Photo = styled.img`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
@@ -44,17 +42,18 @@ const Photos = ({ previewImages }) => {
           );
         })}
 
-      {previewImages.map((url, index) => {
-        return (
-          <Photo
-            width="200px"
-            height="200px"
-            key={index}
-            src={url}
-            alt={`${index}-photo`}
-          />
-        );
-      })}
+      {previewImages.length > 2 &&
+        previewImages.map((url, index) => {
+          return (
+            <Photo
+              width="200px"
+              height="200px"
+              key={index}
+              src={url}
+              alt={`${index}-photo`}
+            />
+          );
+        })}
     </SPhotos>
   );
 };

@@ -14,6 +14,11 @@ import useUser from "../hooks/useUser";
 const SHeader = styled.header`
   width: 100%;
   border-bottom: 1px solid ${(props) => props.theme.borderColor};
+  background-color: ${(props) => props.theme.bgColor};
+  z-index: 999;
+  position: fixed;
+  top: 0;
+  left: 0;
 `;
 
 const LogoBox = styled.div`

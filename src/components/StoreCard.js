@@ -8,26 +8,32 @@ import { BiDetail } from "react-icons/bi";
 const SStoreCard = styled.div`
   border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0px 0px 10px 3px ${(props) => props.theme.login.shadowColor};
 `;
 
 const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   background-color: ${(props) => props.theme.login.btnBgColor};
   padding: 5px;
-  div {
+  div:first-child {
+    padding: 3px 0;
     display: flex;
     align-items: center;
+    justify-content: space-between;
   }
 `;
 const Avatar = styled.img`
   width: 40px;
   height: 40px;
-  border: 2px solid ${(props) => props.theme.borderColor};
+  border: 2px solid ${(props) => props.theme.login.btnFontColor};
   padding: 2px;
   border-radius: 50%;
   margin-right: 8px;
+`;
+
+const Title = styled.div`
+  padding: 8px 0;
+  font-size: 24px;
+  border-top: 1px solid lightgray;
 `;
 
 const MoveBtn = styled.div`
@@ -39,7 +45,7 @@ const Content = styled.div`
   width: 100%;
   height: 500px;
   background-image: url(${(props) => props.url});
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center center;
 `;
 
@@ -76,18 +82,23 @@ const StoreCard = ({ store, page }) => {
     <SStoreCard>
       <Header>
         <div>
-          <Avatar
-            src={
-              store.user.avatarURL ? store.user.avatarURL : "/images/avatar.png"
-            }
-          />
-          <span>{store.user.username}</span>
+          <div>
+            <Avatar
+              src={
+                store.user.avatarURL
+                  ? store.user.avatarURL
+                  : "/images/avatar.png"
+              }
+            />
+            <span>{store.user.username}</span>
+          </div>
+          <MoveBtn>
+            <Link to={`/store/${store.id}`}>
+              <BiDetail />
+            </Link>
+          </MoveBtn>
         </div>
-        <MoveBtn>
-          <Link to={`/store/${store.id}`}>
-            <BiDetail />
-          </Link>
-        </MoveBtn>
+        <Title>{store.store}</Title>
       </Header>
       <Content url={store.photos[0].photoURL}></Content>
       <Footer>
