@@ -131,7 +131,6 @@ const EditStore = ({
     handleSubmit,
     clearErrors,
     setValue,
-    watch,
     formState: { errors },
   } = useForm({
     mode: "onChange",

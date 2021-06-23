@@ -86,7 +86,6 @@ const Profile = () => {
       isMounted = false;
     };
   }, [getProfile]);
-  console.log(data?.seeProfile);
   return (
     <Wrapper>
       <ProfileSection>
