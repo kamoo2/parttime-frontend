@@ -143,13 +143,9 @@ const EditStore = ({
       rule: newRule.join(","),
     },
   });
-  console.log(watch());
   const [updateStoreMutation, { loading }] = useMutation(
     UPDATE_STORE_MUTATION,
     {
-      onCompleted: (data) => {
-        console.log(data);
-      },
       refetchQueries: [
         { query: QUERY_SEE_STORES, variables: { page: 1 } },
         { query: QUERY_SEE_STORE, variables: { id } },

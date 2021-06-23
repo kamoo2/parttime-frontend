@@ -1,5 +1,5 @@
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TitleBox from "../components/TitleBox";
 import PageTitle from "../components/PageTitle";
@@ -50,7 +50,6 @@ const Home = () => {
       page,
     },
   });
-  console.log(data);
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {

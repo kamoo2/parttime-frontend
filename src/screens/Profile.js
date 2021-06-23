@@ -7,7 +7,7 @@ import Wrapper from "../components/createStore/Wrapper";
 import Photos from "../components/profile/Photos";
 import routes from "../routes";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 const ProfileSection = styled.section`
   width: 50%;

@@ -128,7 +128,6 @@ const StyledPopup = styled(Popup)`
 const StoreItem = ({ store, id }) => {
   const history = useHistory();
   const onCompleted = (data) => {
-    console.log(data);
     if (data.deleteStore.ok) {
       history.push(routes.home);
     }
@@ -148,7 +147,6 @@ const StoreItem = ({ store, id }) => {
   });
 
   const deleteBtnHandler = () => {
-    console.log("zz");
     if (loading) {
       return;
     }
@@ -203,12 +201,12 @@ const StoreItem = ({ store, id }) => {
         <Category>{store.category.name}</Category>
         <Holidays>
           {store.holidays.map((holiday) => {
-            return <Holiday>{holiday.name}</Holiday>;
+            return <Holiday key={holiday.id}>{holiday.name}</Holiday>;
           })}
         </Holidays>
         <Rules>
           {store.rules.map((rule) => {
-            return <Rule>{rule.name}</Rule>;
+            return <Rule key={rule.id}>{rule.name}</Rule>;
           })}
         </Rules>
       </SubHeader>

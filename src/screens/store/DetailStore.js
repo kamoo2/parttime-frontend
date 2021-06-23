@@ -5,7 +5,7 @@ import PageTitle from "../../components/PageTitle";
 import { Loader, PageLoader } from "../../components/Loader";
 import StoreItem from "../../components/StoreItem";
 import Wrapper from "../../components/createStore/Wrapper";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import Comments from "../../components/Comments";
 
 const DetailStore = () => {

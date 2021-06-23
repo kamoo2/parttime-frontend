@@ -91,7 +91,6 @@ function EditInfoForm({ id, username, name, phoneNumber, email, avatarURL }) {
     });
   };
   const onCompleted = (data) => {
-    console.log(data);
     if (data?.editProfile?.ok) {
       history.push(`/users/${data?.editProfile?.id}`);
     } else {
