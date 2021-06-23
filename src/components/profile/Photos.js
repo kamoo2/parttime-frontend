@@ -1,7 +1,6 @@
 import { useLazyQuery } from "@apollo/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
-import { useState } from "react/cjs/react.development";
 import styled from "styled-components";
 import { MY_STORES_QUERY } from "../../apollo/queries/store";
 import Wrapper from "../createStore/Wrapper";

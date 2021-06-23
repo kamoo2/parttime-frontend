@@ -6,7 +6,7 @@ import Popup from "reactjs-popup";
 import { darkModeVar } from "../../apollo/vars";
 import FieldBox from "../employee/FieldBox";
 import { useForm } from "react-hook-form";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import {
   DELETE_EMPLOYEE_MUTATION,
   UPDATE_EMPLOYEE_MUTATION,

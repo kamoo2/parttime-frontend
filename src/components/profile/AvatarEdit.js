@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import styled from "styled-components";
 import { EDIT_PROFILE_MUTATION } from "../../apollo/mutation/user";
 import { SEE_PROFILE_QUERY } from "../../apollo/queries/user";

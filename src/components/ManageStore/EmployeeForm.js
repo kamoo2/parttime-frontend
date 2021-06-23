@@ -1,6 +1,6 @@
 import { useMutation, useReactiveVar } from "@apollo/client";
 import { useForm } from "react-hook-form";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import styled from "styled-components";
 import { CREATE_EMPLOYEE_MUTATION } from "../../apollo/mutation/employee";
 import { SEE_EMPLOYEES_QUERY } from "../../apollo/queries/employee";

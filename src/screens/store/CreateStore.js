@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import React, { useState } from "react";
 import styled from "styled-components";
 import { CREATE_STORE_MUTATION } from "../../apollo/mutation/store";
 import { MY_STORES_QUERY, QUERY_SEE_STORES } from "../../apollo/queries/store";

@@ -12,7 +12,7 @@ import {
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import FormError from "../auth/FormError";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   padding: 20px 30px;

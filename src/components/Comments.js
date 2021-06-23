@@ -1,6 +1,5 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { useEffect } from "react";
-import { useState } from "react/cjs/react.development";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { SEE_COMMENTS_QUERY } from "../apollo/queries/comment";
 import Comment from "./Comment";
