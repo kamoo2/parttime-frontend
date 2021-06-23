@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export const MUTATION_CREATE_STORE = gql`
+export const CREATE_STORE_MUTATION = gql`
   mutation createStore(
     $store: String!
     $storeNumber: String!
@@ -21,10 +21,6 @@ export const MUTATION_CREATE_STORE = gql`
         id
         store
         storeNumber
-        photos {
-          id
-          photoURL
-        }
       }
       ok
       error
@@ -32,7 +28,36 @@ export const MUTATION_CREATE_STORE = gql`
   }
 `;
 
-export const MUTATION_DELETE_STORE = gql`
+export const UPDATE_STORE_MUTATION = gql`
+  mutation updateStore(
+    $id: Int!
+    $store: String
+    $storeNumber: String
+    $files: [Upload]
+    $category: String
+    $holiday: String
+    $rule: String
+  ) {
+    updateStore(
+      id: $id
+      store: $store
+      storeNumber: $storeNumber
+      files: $files
+      category: $category
+      holiday: $holiday
+      rule: $rule
+    ) {
+      ok
+      error
+      newStore {
+        id
+        store
+      }
+    }
+  }
+`;
+
+export const DELETE_STORE_MUTATION = gql`
   mutation deleteStore($id: Int!) {
     deleteStore(id: $id) {
       ok
@@ -53,6 +78,15 @@ export const CREATE_DAILY_SAIL_MUTATION = gql`
 export const DELETE_DAILY_SAIL_MUTATION = gql`
   mutation deleteDailySail($sailId: Int!) {
     deleteDailySail(sailId: $sailId) {
+      ok
+      error
+    }
+  }
+`;
+
+export const LIKE_STORE_MUTATION = gql`
+  mutation likeStore($id: Int!) {
+    likeStore(id: $id) {
       ok
       error
     }

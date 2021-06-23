@@ -1,20 +1,77 @@
 import { useMutation } from "@apollo/client";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { MUTATION_CREATE_STORE } from "../../apollo/mutation/store";
-import { QUERY_SEE_STORES } from "../../apollo/queries/store";
-import Button from "../../components/auth/Button";
+import { useState } from "react/cjs/react.development";
+import styled from "styled-components";
+import { CREATE_STORE_MUTATION } from "../../apollo/mutation/store";
+import { MY_STORES_QUERY, QUERY_SEE_STORES } from "../../apollo/queries/store";
 import FormError from "../../components/auth/FormError";
-import Input from "../../components/auth/Input";
+import Photos from "../../components/createStore/Photos";
+
 import Wrapper from "../../components/createStore/Wrapper";
-import TitleBox from "../../components/TitleBox";
+import Content from "../../components/profile/Content";
 import { PhoneRegex } from "../../regaxs";
-import routes from "../../routes";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import useUser from "../../hooks/useUser";
-import { MY_STORES_QUERY } from "../../components/profile/Photos";
-import { SEE_PROFILE_QUERY } from "../../apollo/queries/user";
+
+const InputItems = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  grid-gap: 1.5rem;
+  margin-bottom: 15px;
+  div:nth-child(1) {
+    grid-column: 1/4;
+  }
+  div:nth-child(2) {
+    grid-column: 4/7;
+  }
+`;
+
+const InputItem = styled.div`
+  width: 100%;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  label {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: ${(props) => props.theme.fontColor};
+  }
+  input {
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    padding: 8px 12px;
+    color: ${(props) => props.theme.fontColor};
+  }
+`;
+
+const FormWrapper = styled.div`
+  padding: 24px;
+`;
+
+const Group = styled.div`
+  display: flex;
+  align-items: center;
+  span {
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+`;
+
+const ButtonBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 10px;
+  button {
+    font-size: 20px;
+    text-align: center;
+    padding: 16px 24px;
+    border-radius: 4px;
+    background-color: ${(props) => props.theme.login.btnBgColor};
+    color: ${(props) => props.theme.login.btnFontColor};
+    margin-bottom: 10px;
+  }
+`;
 
 const CreateStore = () => {
   const {
@@ -22,105 +79,167 @@ const CreateStore = () => {
     handleSubmit,
     clearErrors,
     setError,
-    setFocus,
+    setValue,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useForm({
+    mode: "onChange",
+  });
+  const [previewImages, setPreviewImages] = useState([]);
   const history = useHistory();
-  const { data: userData } = useUser();
-  const [load, setLoad] = useState(false);
-  const onCompleted = ({ createStore: { ok, error } }) => {
-    setLoad(false);
+  const onCompleted = (data) => {
+    const {
+      createStore: { ok, error, store },
+    } = data;
     if (ok) {
-      history.push(routes.home);
+      history.push(`/store/${store.id}`);
     } else {
-      setFocus("storeNumber");
       setError("result", { message: error });
     }
   };
-
   const [createStoreMutation, { loading }] = useMutation(
-    MUTATION_CREATE_STORE,
+    CREATE_STORE_MUTATION,
     {
       onCompleted,
       refetchQueries: [
         { query: QUERY_SEE_STORES, variables: { page: 1 } },
         { query: MY_STORES_QUERY, variables: { page: 1 } },
-        {
-          query: SEE_PROFILE_QUERY,
-          variables: { username: userData?.me?.username },
-        },
       ],
     }
   );
-
-  const onValid = (data) => {
+  const onSubmitValid = (data) => {
+    const { store, storeNumber, rule, category, holiday, files } = data;
     if (loading) {
       return;
     }
-    setLoad(true);
     createStoreMutation({
       variables: {
-        ...data,
+        store,
+        storeNumber,
+        category,
+        rule,
+        holiday,
+        files,
       },
     });
   };
-
-  const storeNumber = register("storeNumber", {
-    required: "가게의 전화번호를 입력해주세요.",
+  const handleImagePreview = (e) => {
+    const fileArr = e.target.files;
+    let fileURLs = [];
+    let file;
+    let filesLength = fileArr.length > 6 ? 6 : fileArr.length;
+    for (let i = 0; i < filesLength; i++) {
+      file = fileArr[i];
+      let reader = new FileReader();
+      reader.onload = () => {
+        fileURLs[i] = reader.result;
+        setPreviewImages([...fileURLs]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const storeNumberRef = register("storeNumber", {
+    required: "전화번호를 입력해주세요.",
     pattern: {
       value: PhoneRegex,
-      message: "xxx-xxxx-xxxx양식에 맞게 입력해주세요.",
+      message: "xxx-xxxx-xxxx 양식에 맞춰주세요.",
     },
   });
+
   return (
     <Wrapper>
-      <TitleBox
-        title="CREATE STORE"
-        subtitle="STORE을 생성해주세요."
-        titleSize="40px"
-        subSize="20px"
-      />
-      <form onSubmit={handleSubmit(onValid)}>
-        <Input
-          {...register("store", { required: "가게명을 입력해주세요." })}
-          type="text"
-          placeholder="storename"
-        />
-        <FormError message={errors?.store?.message} />
-        <Input
-          {...storeNumber}
-          type="text"
-          onChange={(e) => {
-            clearErrors("result");
-            storeNumber.onChange(e);
-          }}
-          placeholder="storeNumber"
-        />
-        <FormError message={errors?.storeNumber?.message} />
-        <Input
-          {...register("category", {
-            required: "가게의 카테고리를 입력해주세요.",
-          })}
-          type="text"
-          placeholder="category"
-        />
-        <FormError message={errors?.category?.message} />
-        <Input
-          {...register("holiday", { required: "가게의 휴일을 입력해주세요." })}
-          type="text"
-          placeholder="holiday"
-        />
-        <FormError message={errors?.holiday?.message} />
-        <Input {...register("rule")} type="text" placeholder="rule" />
-        <Input
-          {...register("files", { required: "가게의 사진을 등록해주세요." })}
-          type="file"
-          multiple
-        />
-        <FormError message={errors?.files?.message} />
-        <Button type="submit" value="생성용" load={load} />
-        <FormError message={errors?.result?.message} />
-      </form>
+      <Content title="Create Store">
+        <form onSubmit={handleSubmit(onSubmitValid)}>
+          <FormWrapper>
+            <InputItems>
+              <InputItem>
+                <label htmlFor="name">가게명</label>
+                <input
+                  {...register("store", {
+                    required: "가게 이름을 입력해주세요.",
+                  })}
+                  id="name"
+                  type="text"
+                />
+                <FormError message={errors?.store?.message} />
+              </InputItem>
+              <InputItem>
+                <label htmlFor="number">전화번호</label>
+                <input
+                  {...storeNumberRef}
+                  id="number"
+                  type="text"
+                  onChange={(e) => {
+                    clearErrors("result");
+                    storeNumberRef.onChange(e);
+                  }}
+                />
+                <FormError message={errors?.storeNumber?.message} />
+              </InputItem>
+            </InputItems>
+            <InputItems>
+              <InputItem>
+                <label htmlFor="category">분야</label>
+                <input
+                  {...register("category", {
+                    required: "카테고리를 입력해주세요.",
+                  })}
+                  id="category"
+                  type="text"
+                />
+                <FormError message={errors?.category?.message} />
+              </InputItem>
+              <InputItem>
+                <Group>
+                  <label htmlFor="rule">규칙</label>
+                  <span>(2개 이상 입력시 ,를 이용해주세요)</span>
+                </Group>
+                <input
+                  {...register("rule", { required: "규칙을 입력해주세요." })}
+                  id="rule"
+                  type="text"
+                />
+                <FormError message={errors?.rule?.message} />
+              </InputItem>
+            </InputItems>
+            <InputItems>
+              <InputItem>
+                <Group>
+                  <label htmlFor="holiday">휴일</label>
+                  <span>(2개 이상 입력시 ,를 이용해주세요)</span>
+                </Group>
+                <input
+                  {...register("holiday", { required: "휴일을 입력해주세요." })}
+                  id="holiday"
+                  type="text"
+                />
+                <FormError message={errors?.holiday?.message} />
+              </InputItem>
+              <InputItem>
+                <label>Photos</label>
+                <input
+                  {...register("files", { required: "사진을 등록해주세요" })}
+                  type="file"
+                  multiple
+                  onChange={(e) => {
+                    handleImagePreview(e);
+                    setValue("files", e.target.files);
+                  }}
+                />
+                <FormError message={errors?.files?.message} />
+              </InputItem>
+            </InputItems>
+            <ButtonBox>
+              <button type="submit">등록</button>
+              <FormError message={errors?.result?.message} />
+            </ButtonBox>
+          </FormWrapper>
+        </form>
+      </Content>
+      {previewImages.length > 0 && (
+        <Content title="Preview Photos">
+          <Photos previewImages={previewImages} />
+        </Content>
+      )}
     </Wrapper>
   );
 };

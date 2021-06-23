@@ -8,15 +8,14 @@ import Photos from "../components/profile/Photos";
 import routes from "../routes";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { Loader } from "../components/Loader";
 
 const ProfileSection = styled.section`
   width: 50%;
   border-radius: 5px;
   padding: 25px 25px;
   margin: 100px 0;
-  background-color: white;
-  box-shadow: 0px 7px 14px 3px rgba(148, 140, 148, 1);
+  background-color: ${(props) => props.theme.bgColor};
+  box-shadow: 0px 0px 25px 3px ${(props) => props.theme.login.shadowColor};
 `;
 
 const InfoBox = styled.div``;
@@ -29,6 +28,8 @@ const Title = styled.h1`
 
 const Field = styled.h1`
   font-size: ${(props) => props.size};
+  color: ${(props) => props.theme.fontColor};
+  font-weight: 900;
 `;
 
 const AvatarBox = styled.div`
@@ -45,7 +46,10 @@ const InfoContainer = styled.div`
   display: flex;
 `;
 
-const TopBox = styled.div``;
+const TopBox = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+`;
 const BottomBox = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -66,11 +70,12 @@ const SubInfo = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  color: ${(props) => props.theme.fontColor};
 `;
 const Profile = () => {
-  const { username } = useParams();
-  const [getProfile, { data, loading }] = useLazyQuery(SEE_PROFILE_QUERY, {
-    variables: { username },
+  const { id } = useParams();
+  const [getProfile, { data }] = useLazyQuery(SEE_PROFILE_QUERY, {
+    variables: { id: parseInt(id) },
   });
   useEffect(() => {
     let isMounted = true;
@@ -81,13 +86,7 @@ const Profile = () => {
       isMounted = false;
     };
   }, [getProfile]);
-  if (loading) {
-    return (
-      <Wrapper>
-        <Loader />
-      </Wrapper>
-    );
-  }
+  console.log(data?.seeProfile);
   return (
     <Wrapper>
       <ProfileSection>
@@ -95,23 +94,33 @@ const Profile = () => {
           <InfoContainer>
             <AvatarBox>
               <Avatar
-                url={data?.seeProfile?.avatarURL}
-                exist={Boolean(data?.seeProfile?.avatarURL)}
+                url={data?.seeProfile?.user?.avatarURL}
+                exist={Boolean(data?.seeProfile?.user?.avatarURL)}
               />
             </AvatarBox>
             <Info>
               <TopBox>
-                <Title>Username</Title>
-                <Field size="25px">{data?.seeProfile?.username}</Field>
+                <div>
+                  <Title>Username</Title>
+                  <Field size="20px">{data?.seeProfile?.user?.username}</Field>
+                </div>
+                <div>
+                  <Title>Name</Title>
+                  <Field size="20px">{data?.seeProfile?.user?.name}</Field>
+                </div>
               </TopBox>
               <BottomBox>
                 <div>
-                  <Title>Name</Title>
-                  <Field size="18px">{data?.seeProfile?.name}</Field>
+                  <Title>PhoneNumber</Title>
+                  <Field size="18px">
+                    {data?.seeProfile?.user?.phoneNumber
+                      ? data?.seeProfile?.user?.phoneNumber
+                      : "등록해주세요."}
+                  </Field>
                 </div>
                 <div>
                   <Title>Email</Title>
-                  <Field size="18px">{data?.seeProfile?.email}</Field>
+                  <Field size="18px">{data?.seeProfile?.user?.email}</Field>
                 </div>
               </BottomBox>
             </Info>
@@ -120,18 +129,18 @@ const Profile = () => {
             <Link
               to={{
                 pathname: routes.editProfile,
-                state: { id: data?.seeProfile?.id },
+                state: { id: data?.seeProfile?.user?.id },
               }}
             >
               <ButtonBox>프로필 수정</ButtonBox>
             </Link>
             <TotalCount>
-              소유한 Store 개수 : {data?.seeProfile?.total_stores}
+              STORE {data?.seeProfile?.user?.total_stores}개
             </TotalCount>
           </SubInfo>
         </InfoBox>
       </ProfileSection>
-      <Photos username={data?.seeProfile?.username} />
+      <Photos username={data?.seeProfile?.user?.username} />
     </Wrapper>
   );
 };

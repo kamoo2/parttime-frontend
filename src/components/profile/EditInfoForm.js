@@ -1,15 +1,71 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { MUTATION_EDIT_PROFILE } from "../../apollo/mutation/user";
+import styled from "styled-components";
+import { EDIT_PROFILE_MUTATION } from "../../apollo/mutation/user";
+import { SEE_PROFILE_QUERY } from "../../apollo/queries/user";
 import { EmailRegex, PhoneRegex } from "../../regaxs";
 import FormError from "../auth/FormError";
+import Wrapper from "../createStore/Wrapper";
+import AvatarEdit from "./AvatarEdit";
+import Content from "./Content";
+
+const InputItems = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  grid-gap: 1.5rem;
+  margin-bottom: 15px;
+  div:nth-child(1) {
+    grid-column: 1/4;
+  }
+  div:nth-child(2) {
+    grid-column: 4/7;
+  }
+`;
+
+const InputItem = styled.div`
+  width: 100%;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  label {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: ${(props) => props.theme.fontColor};
+  }
+  input {
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    padding: 8px 12px;
+    color: ${(props) => props.theme.fontColor};
+  }
+`;
+
+const FormWrapper = styled.div`
+  padding: 24px;
+`;
+
+const ButtonBox = styled.div`
+  background-color: rgba(229, 231, 235, 0.3);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: ${(props) => props.theme.login.btnBgColor};
+    color: ${(props) => props.theme.login.btnFontColor};
+  }
+`;
+
+const Form = styled.form``;
 
 function EditInfoForm({ id, username, name, phoneNumber, email, avatarURL }) {
   const history = useHistory();
   const {
     register,
-    getValues,
     handleSubmit,
     formState: { errors },
     setError,
@@ -31,51 +87,20 @@ function EditInfoForm({ id, username, name, phoneNumber, email, avatarURL }) {
         ...(phoneNumber !== newData?.phoneNumber && {
           phoneNumber: newData?.phoneNumber,
         }),
-        ...(newData?.avatarURL.length === 1 && {
-          file: newData?.avatarURL[0],
-        }),
       },
     });
   };
   const onCompleted = (data) => {
+    console.log(data);
     if (data?.editProfile?.ok) {
-      history.push(`/users/${data?.editProfile?.username}`);
+      history.push(`/users/${data?.editProfile?.id}`);
+    } else {
+      setError("result", { message: data?.editProfile?.error });
     }
   };
-  const [editProfileMutation] = useMutation(MUTATION_EDIT_PROFILE, {
+  const [editProfileMutation] = useMutation(EDIT_PROFILE_MUTATION, {
     onCompleted,
-    update: (cache, result) => {
-      const { email, name, phoneNumber } = getValues();
-      console.log(result);
-      const {
-        data: {
-          editProfile: { ok, username, avatarURL },
-        },
-      } = result;
-      if (ok) {
-        const fragmentId = `User:${id}`;
-        const fragment = gql`
-          fragment BSName on User {
-            username
-            email
-            name
-            phoneNumber
-            avatarURL
-          }
-        `;
-        cache.writeFragment({
-          id: fragmentId,
-          fragment,
-          data: {
-            username,
-            email,
-            name,
-            phoneNumber,
-            avatarURL,
-          },
-        });
-      }
-    },
+    refetchQueries: [{ query: SEE_PROFILE_QUERY, variables: { id } }],
   });
 
   const usernameRef = register("username", {
@@ -99,40 +124,87 @@ function EditInfoForm({ id, username, name, phoneNumber, email, avatarURL }) {
       message: "xxx-xxxx-xxxx양식에 맞게 입력해주세요.",
     },
   });
-  console.log(errors);
   return (
-    <form onSubmit={handleSubmit(onSubmitEditProfile)}>
-      <input
-        {...usernameRef}
-        type="text"
-        placeholder="Username"
-        defaultValue={username}
-      />
-      <FormError message={errors?.username?.message} />
-      <input
-        {...register("name", { required: "name을 입력해주세요." })}
-        type="text"
-        placeholder="Name"
-        defaultValue={name}
-      />
-      <FormError message={errors?.name?.message} />
-      <input
-        {...phoneNumberRef}
-        type="text"
-        placeholder="PhoneNumber"
-        defaultValue={phoneNumber}
-      />
-      <FormError message={errors?.phoneNumber?.message} />
-      <input
-        {...emailRef}
-        type="text"
-        placeholder="Email"
-        defaultValue={email}
-      />
-      <FormError message={errors?.email?.message} />
-      <input {...register("avatarURL")} type="file" />
-      <button type="onSubmit">Edit</button>
-    </form>
+    <Wrapper>
+      <Content title="Account Information">
+        <Form onSubmit={handleSubmit(onSubmitEditProfile)}>
+          <FormWrapper>
+            <InputItems>
+              <InputItem>
+                <label htmlFor="username">Username</label>
+                <input
+                  {...usernameRef}
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                  defaultValue={username}
+                  onChange={(e) => {
+                    clearErrors("result");
+                    usernameRef.onChange(e);
+                  }}
+                />
+                <FormError message={errors?.username?.message} />
+              </InputItem>
+              <InputItem>
+                <label htmlFor="name">Name</label>
+                <input
+                  id="name"
+                  {...register("name", { required: "name을 입력해주세요." })}
+                  type="text"
+                  placeholder="Name"
+                  defaultValue={name}
+                />
+                <FormError message={errors?.name?.message} />
+              </InputItem>
+            </InputItems>
+            <InputItems>
+              <InputItem>
+                <label htmlFor="phoneNumber">PhoneNumber</label>
+                <input
+                  id="phoneNumber"
+                  {...phoneNumberRef}
+                  type="text"
+                  placeholder="PhoneNumber"
+                  defaultValue={phoneNumber}
+                  onChange={(e) => {
+                    clearErrors("result");
+                    phoneNumberRef.onChange(e);
+                  }}
+                />
+                <FormError message={errors?.phoneNumber?.message} />
+              </InputItem>
+              <InputItem>
+                <label htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  {...emailRef}
+                  type="text"
+                  placeholder="Email"
+                  defaultValue={email}
+                  onChange={(e) => {
+                    clearErrors("result");
+                    emailRef.onChange(e);
+                  }}
+                />
+                <FormError message={errors?.email?.message} />
+              </InputItem>
+            </InputItems>
+          </FormWrapper>
+          <ButtonBox>
+            <button type="onSubmit">Save</button>
+            <FormError message={errors?.result?.message} />
+          </ButtonBox>
+        </Form>
+      </Content>
+      <Content title="Avatar">
+        <AvatarEdit avatarURL={avatarURL} id={id}>
+          <ButtonBox>
+            <button type="onSubmit">Upload & Save</button>
+            <FormError message={errors?.result?.message} />
+          </ButtonBox>
+        </AvatarEdit>
+      </Content>
+    </Wrapper>
   );
 }
 

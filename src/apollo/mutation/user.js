@@ -29,7 +29,7 @@ export const MUTATION_CREATE_ACCOUNT = gql`
   }
 `;
 
-export const MUTATION_EDIT_PROFILE = gql`
+export const EDIT_PROFILE_MUTATION = gql`
   mutation editProfile(
     $username: String
     $name: String
@@ -45,7 +45,7 @@ export const MUTATION_EDIT_PROFILE = gql`
       file: $file
     ) {
       avatarURL
-      username
+      id
       ok
       error
     }

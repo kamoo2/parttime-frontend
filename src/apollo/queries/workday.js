@@ -14,3 +14,12 @@ export const SEE_WORKDAYS_QUERY = gql`
     }
   }
 `;
+
+export const SEE_WORKTIMES_QUERY = gql`
+  query seeWorkTimes {
+    seeWorkTimes {
+      id
+      time
+    }
+  }
+`;

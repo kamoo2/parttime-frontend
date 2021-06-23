@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Wrapper from "../components/createStore/Wrapper";
 import EditInfoForm from "../components/profile/EditInfoForm";
 import useUser from "../hooks/useUser";

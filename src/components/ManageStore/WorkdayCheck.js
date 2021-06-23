@@ -5,7 +5,10 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { CREATE_WORKDAY_MUTATION } from "../../apollo/mutation/workday";
 import { SEE_EMPLOYEES_QUERY } from "../../apollo/queries/employee";
-import { SEE_WORKDAYS_QUERY } from "../../apollo/queries/workday";
+import {
+  SEE_WORKDAYS_QUERY,
+  SEE_WORKTIMES_QUERY,
+} from "../../apollo/queries/workday";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import FormError from "../auth/FormError";
@@ -13,6 +16,7 @@ import { useState } from "react/cjs/react.development";
 
 const Wrapper = styled.div`
   padding: 20px 30px;
+  background-color: ${(props) => props.theme.bgColor};
 `;
 const Description = styled.div`
   width: 50%;
@@ -50,6 +54,7 @@ const WorkCount = styled.h1`
 `;
 const Span = styled.h1`
   font-size: 20px;
+  margin-right: 10px;
 `;
 
 const Time = styled.span`
@@ -64,11 +69,6 @@ const Time = styled.span`
 
 const WorkdayCheck = ({ storeId, employeeId, salary, name }) => {
   const [wTime, setWTime] = useState(0);
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = now.getMonth() + 1;
-  const dd = now.getDate() + 1;
-  const slug = mm < 10 ? `${yyyy}-0${mm}-${dd}` : `${yyyy}-${mm}-${dd}`;
   const {
     register,
     handleSubmit,
@@ -76,7 +76,7 @@ const WorkdayCheck = ({ storeId, employeeId, salary, name }) => {
     clearErrors,
     formState: { errors },
   } = useForm({ mode: "onChange" });
-  const [createWorkdayMutation, { loading, data }] = useMutation(
+  const [createWorkdayMutation, { loading }] = useMutation(
     CREATE_WORKDAY_MUTATION,
     {
       refetchQueries: [
@@ -102,15 +102,18 @@ const WorkdayCheck = ({ storeId, employeeId, salary, name }) => {
       },
     });
 
+  const [getWorkTimes, { data }] = useLazyQuery(SEE_WORKTIMES_QUERY);
+
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
       getWorkdays();
+      getWorkTimes();
     }
     return () => {
       isMounted = false;
     };
-  }, [getWorkdays]);
+  }, [getWorkdays, getWorkTimes]);
 
   const handleDateClick = (arg) => {
     if (loading) {
@@ -148,16 +151,9 @@ const WorkdayCheck = ({ storeId, employeeId, salary, name }) => {
   });
 
   const onSubmitValid = (data) => {
-    console.log(data);
-    setWTime(data.workTime);
+    setWTime(data.wt);
   };
-  const wt = register("workTime", {
-    required: "근무 시간을 입력해주세요.",
-    pattern: {
-      value: /^([1-9]|1[012])$/g,
-      message: "1에서 12까지의 숫자만 입력해주세요.",
-    },
-  });
+  const wt = register("wt");
   return (
     <Wrapper>
       <Name>{name}님</Name>
@@ -169,17 +165,23 @@ const WorkdayCheck = ({ storeId, employeeId, salary, name }) => {
           6월 실시간 월급은 {parseInt(salary).toLocaleString()} 원입니다.
         </Span>
         <form onSubmit={handleSubmit(onSubmitValid)}>
-          <Span>TIME : </Span>
-          <input
+          <Span>TIME </Span>
+          <select
             {...wt}
-            maxLength="2"
-            type="text"
             onChange={(e) => {
               clearErrors("result");
               wt.onChange(e);
             }}
-          />
-          <Span>시간</Span>
+          >
+            <option value={0}>선택안함</option>
+            {data?.seeWorkTimes?.map((time) => {
+              return (
+                <option key={time.id} value={time.time}>
+                  {time.time}
+                </option>
+              );
+            })}
+          </select>
           <button type="submit">근무 시간 등록</button>
         </form>
         <FormError message={errors?.workTime?.message} />
@@ -190,7 +192,6 @@ const WorkdayCheck = ({ storeId, employeeId, salary, name }) => {
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         dateClick={handleDateClick}
-        validRange={{ end: slug }}
         events={eventObjs}
       />
     </Wrapper>

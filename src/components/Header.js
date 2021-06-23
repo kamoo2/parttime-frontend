@@ -56,8 +56,7 @@ const Header = () => {
             <Icon>
               <Link
                 to={{
-                  pathname: `/users/${data?.me?.username}`,
-                  state: { id: data?.me?.id },
+                  pathname: `/users/${data?.me?.id}`,
                 }}
               >
                 <FiUser size={31} />

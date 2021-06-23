@@ -1,6 +1,6 @@
 const routes = {
   home: "/",
-  profile: "/users/:username",
+  profile: "/users/:id",
   editProfile: "/my/profile",
   storeAdd: "/store-add",
   storeView: "/store/:id",

@@ -17,6 +17,7 @@ import Wrapper from "../../components/createStore/Wrapper";
 import { Loader } from "../../components/Loader";
 import SailChart from "../../components/ManageStore/SailChart";
 import Employees from "../../components/ManageStore/Employees";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const StoreInfo = styled.div`
   width: 100%;
@@ -224,7 +225,9 @@ const ManageStore = () => {
     <Wrapper>
       <StoreInfo>
         <AvatarBox>
-          <StorePhoto url={data?.seeStore?.store?.photos[0].photoURL} />
+          <Link to={`/store/${id}`}>
+            <StorePhoto url={data?.seeStore?.store?.photos[0].photoURL} />
+          </Link>
           <StoreName>{data?.seeStore?.store?.store}</StoreName>
           <StoreName>
             {data?.seeStore?.store?.user?.username}님의 가게입니다.

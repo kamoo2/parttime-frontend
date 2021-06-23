@@ -18,8 +18,8 @@ import WorkdayCheck from "./WorkdayCheck";
 
 const SEmployeeCard = styled.div`
   width: 100%;
-  padding: 30px 10px;
-  border: 2px solid ${(props) => props.theme.borderColor};
+  padding: 70px 10px;
+  box-shadow: 0px 0px 25px 3px ${(props) => props.theme.login.shadowColor};
   border-radius: 10px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -59,6 +59,7 @@ const Icons = styled.div`
 const FormBox = styled.div`
   width: 100%;
   position: relative;
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 const InputCard = styled.div`
@@ -143,8 +144,13 @@ const EmployeeCard = ({
   list = "false",
 }) => {
   const isDarkMode = useReactiveVar(darkModeVar);
-  const [preview, setPreview] = useState(avatarURL);
-
+  const [preview, setPreview] = useState(
+    avatarURL
+      ? avatarURL
+      : isDarkMode
+      ? "/images/dark_avatar.png"
+      : "/images/avatar.png"
+  );
   const { register, handleSubmit, setValue } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -321,7 +327,6 @@ const EmployeeCard = ({
                         type="file"
                         id="avatar2"
                         onChange={(e) => {
-                          console.log("ss");
                           readImage(e.target);
                           setValue("file", e.target.files);
                         }}

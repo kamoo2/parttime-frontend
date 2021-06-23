@@ -1,4 +1,6 @@
+import { useReactiveVar } from "@apollo/client";
 import styled from "styled-components";
+import { darkModeVar } from "../apollo/vars";
 import { BaseAvatar } from "./shared";
 
 const YesAvatar = styled(BaseAvatar)`
@@ -7,12 +9,22 @@ const YesAvatar = styled(BaseAvatar)`
   background-position: center;
 `;
 
-const NoAvatar = styled(BaseAvatar)`
-  background-color: gray;
+const NoAvatar = styled.img`
+  width: 150px;
+  height: 150px;
+  margin-right: 50px;
+  border-radius: 50%;
 `;
 
 const Avatar = ({ url, exist }) => {
-  return exist ? <YesAvatar url={url} /> : <NoAvatar />;
+  const isDarkMode = useReactiveVar(darkModeVar);
+  return exist ? (
+    <YesAvatar url={url} />
+  ) : (
+    <NoAvatar
+      src={isDarkMode ? "/images/dark_avatar.png" : "/images/avatar.png"}
+    />
+  );
 };
 
 export default Avatar;

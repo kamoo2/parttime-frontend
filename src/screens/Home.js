@@ -19,12 +19,20 @@ const StoreSection = styled.div`
   grid-template-rows: repeat(3, 1fr);
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 370px;
+  grid-gap: 25px;
 `;
-
+const PaginationContainer = styled.div`
+  width: 100%;
+  height: 50px;
+  position: relative;
+`;
 const Pagination = styled.div`
   display: grid;
   grid-template-rows: repeat(1, 1fr);
   grid-template-columns: repeat(3, 1fr);
+  position: absolute;
+  right: 30px;
+  top: 0;
 `;
 
 const Span = styled.span`
@@ -32,6 +40,7 @@ const Span = styled.span`
   justify-content: center;
   align-items: center;
   grid-column: 2/3;
+  font-size: 18px;
 `;
 
 const Home = () => {
@@ -41,6 +50,7 @@ const Home = () => {
       page,
     },
   });
+  console.log(data);
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
@@ -67,29 +77,31 @@ const Home = () => {
           titleSize="40px"
           subSize="20px"
         />
+        <PaginationContainer>
+          <Pagination>
+            {page === 1 ? null : (
+              <RiArrowLeftSLine
+                size={30}
+                onClick={() => setPage(page - 1)}
+                style={{ cursor: "pointer", gridColumn: 1 / 2 }}
+              />
+            )}
+            <Span>{page}Page</Span>
+            {page === data?.seeAllStores[0]?.total_page ? null : (
+              <RiArrowRightSLine
+                size={30}
+                onClick={() => setPage(page + 1)}
+                style={{ cursor: "pointer", gridColumn: 3 / 4 }}
+              />
+            )}
+          </Pagination>
+        </PaginationContainer>
         <StoreSection>
           {data &&
             data.seeAllStores.map((item) => (
-              <StoreCard key={item.id} store={item} />
+              <StoreCard key={item.id} store={item} page={page} />
             ))}
         </StoreSection>
-        <Pagination>
-          {page === 1 ? null : (
-            <RiArrowLeftSLine
-              size={30}
-              onClick={() => setPage(page - 1)}
-              style={{ cursor: "pointer", gridColumn: 1 / 2 }}
-            />
-          )}
-          <Span>{page}</Span>
-          {page === data?.seeAllStores[0]?.total_page ? null : (
-            <RiArrowRightSLine
-              size={30}
-              onClick={() => setPage(page + 1)}
-              style={{ cursor: "pointer", gridColumn: 3 / 4 }}
-            />
-          )}
-        </Pagination>
       </Wrapper>
     </MainContainer>
   );
