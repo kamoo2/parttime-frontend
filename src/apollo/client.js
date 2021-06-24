@@ -5,7 +5,10 @@ import { InMemoryCache } from "@apollo/client/cache";
 import { TOKEN } from "../constants";
 
 const uploadLink = createUploadLink({
-  uri: "https://kamoo-parttime-management.herokuapp.com/graphql",
+  uri:
+    process.env.NODE_ENV === "production"
+      ? "https://kamoo-parttime-management.herokuapp.com/graphql"
+      : "http://localhost:4000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {

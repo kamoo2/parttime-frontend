@@ -374,7 +374,7 @@ const EmployeeCard = ({
               </FormBox>
             )}
           </StyledPopup>
-          <HiOutlineX onClick={() => deleteAlert()} />
+          <HiOutlineX onClick={deleteAlert} />
         </Icons>
       ) : null}
     </SEmployeeCard>

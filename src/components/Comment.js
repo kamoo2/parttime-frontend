@@ -3,6 +3,7 @@ import { TiDelete } from "react-icons/ti";
 import { useMutation } from "@apollo/client";
 import { DELETE_COMMENT_MUTATION } from "../apollo/mutation/comment";
 import { SEE_COMMENTS_QUERY } from "../apollo/queries/comment";
+import { QUERY_SEE_STORE } from "../apollo/queries/store";
 const SComment = styled.div`
   display: flex;
   align-items: center;
@@ -41,7 +42,10 @@ const Comment = ({ comment, storeId }) => {
       variables: {
         id: comment.id,
       },
-      refetchQueries: [{ query: SEE_COMMENTS_QUERY, variables: { storeId } }],
+      refetchQueries: [
+        { query: SEE_COMMENTS_QUERY, variables: { storeId } },
+        { query: QUERY_SEE_STORE, variables: { id: storeId } },
+      ],
     }
   );
   return (

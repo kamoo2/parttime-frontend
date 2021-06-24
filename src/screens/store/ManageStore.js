@@ -88,7 +88,9 @@ const SailName = styled.div`
 `;
 
 const Button = styled.button`
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 15px 0;
   margin-top: 20px;
   border-radius: 8px;
@@ -280,7 +282,7 @@ const ManageStore = () => {
               />
               <FormError message={errors?.sail?.message} />
               <Button type="submit" disabled={!isValid}>
-                매출등록
+                {createSailLoading ? <Loader /> : "매출 등록"}
               </Button>
             </Form>
           </FormBox>

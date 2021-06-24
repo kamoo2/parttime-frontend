@@ -7,8 +7,8 @@ import { CREATE_STORE_MUTATION } from "../../apollo/mutation/store";
 import { MY_STORES_QUERY, QUERY_SEE_STORES } from "../../apollo/queries/store";
 import FormError from "../../components/auth/FormError";
 import Photos from "../../components/createStore/Photos";
-
 import Wrapper from "../../components/createStore/Wrapper";
+import { Loader } from "../../components/Loader";
 import Content from "../../components/profile/Content";
 import { PhoneRegex } from "../../regaxs";
 
@@ -64,7 +64,9 @@ const ButtonBox = styled.div`
   padding: 5px 10px;
   button {
     font-size: 20px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 16px 24px;
     border-radius: 4px;
     background-color: ${(props) => props.theme.login.btnBgColor};
@@ -229,7 +231,7 @@ const CreateStore = () => {
               </InputItem>
             </InputItems>
             <ButtonBox>
-              <button type="submit">등록</button>
+              <button type="submit">{loading ? <Loader /> : "생성"}</button>
               <FormError message={errors?.result?.message} />
             </ButtonBox>
           </FormWrapper>

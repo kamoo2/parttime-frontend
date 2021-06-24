@@ -6,6 +6,7 @@ import Comment from "./Comment";
 import { BiCommentCheck } from "react-icons/bi";
 import { CREATE_COMMENT_MUTATION } from "../apollo/mutation/comment";
 import { QUERY_SEE_STORE } from "../apollo/queries/store";
+import { Loader } from "./Loader";
 
 const Container = styled.div`
   width: 100%;
@@ -42,7 +43,9 @@ const Inner = styled.div`
     }
     button {
       width: 100px;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 8px 0;
       border-radius: 3px;
       background-color: ${(props) => props.theme.login.btnBgColor};
@@ -89,6 +92,7 @@ const Comments = ({ storeId, commentCount }) => {
         comment,
       },
     });
+    setComment("");
   };
   return (
     <Container>
@@ -105,7 +109,7 @@ const Comments = ({ storeId, commentCount }) => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
-          <button type="submit">게시</button>
+          <button type="submit">{loading ? <Loader /> : "게시"}</button>
         </form>
         {data?.seeComments?.map((comment) => {
           return (

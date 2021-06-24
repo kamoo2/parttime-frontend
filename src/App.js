@@ -9,7 +9,7 @@ import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 import ReactNotification from "react-notifications-component";
 import "reactjs-popup/dist/index.css";
 import "react-notifications-component/dist/theme.css";
-
+import "react-confirm-alert/src/react-confirm-alert.css";
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const darkMode = useReactiveVar(darkModeVar);
@@ -17,9 +17,9 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <HelmetProvider>
+        <ReactNotification />
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
           <GlobalStyles />
-          <ReactNotification />
           {isLoggedIn ? <LoggedInRouter /> : <LoggedOutRouter />}
         </ThemeProvider>
       </HelmetProvider>

@@ -35,11 +35,11 @@ const SubHeader = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(1, 1fr);
+  grid-gap: 20px;
   font-size: 16px;
 `;
 
 const Category = styled.div`
-  width: 50px;
   text-align: center;
   background-color: #686de0;
   color: #fffcf5;

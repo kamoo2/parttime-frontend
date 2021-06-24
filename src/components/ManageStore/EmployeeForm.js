@@ -8,6 +8,7 @@ import { darkModeVar } from "../../apollo/vars";
 import { PhoneRegex } from "../../regaxs";
 import FormError from "../auth/FormError";
 import EmployeeCard from "./EmployeeCard";
+import { Loader } from "../Loader";
 
 const CreateEmployee = styled.div`
   width: 100%;
@@ -56,7 +57,9 @@ const InputCard = styled.div`
       background-color: ${(props) => props.theme.login.btnBgColor};
       color: ${(props) => props.theme.login.btnFontColor};
       border-radius: 5px;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 `;
@@ -220,7 +223,9 @@ const EmployeeForm = ({ storeId }) => {
                   />
                   <FormError message={errors?.phoneNumber?.message} />
                 </InputBox>
-                <button type="submit">등록</button>
+                <button type="submit">
+                  {createEmployeeLoading ? <Loader /> : "직원생성"}
+                </button>
                 <FormError message={errors?.result?.message} />
               </div>
             </form>
