@@ -28,7 +28,15 @@ const Pagination = styled.div`
   margin-bottom: 20px;
   position: absolute;
   top: -35px;
-  left: -30px;
+  left: -10px;
+  svg:nth-child(1) {
+    justify-self: right;
+    grid-column: 1/2;
+  }
+  svg:nth-child(2) {
+    justify-self: left;
+    grid-column: 3/4;
+  }
 `;
 
 const Span = styled.span`
