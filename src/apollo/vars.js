@@ -15,7 +15,6 @@ export const logOut = (history) => {
   localStorage.removeItem(TOKEN);
   isLoggedInVar(false);
   history.replace(routes.home, null);
-  window.location.reload();
 };
 
 export const disableLoginMode = () => {

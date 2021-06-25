@@ -28,6 +28,7 @@ import {
   MUTATION_CREATE_ACCOUNT,
   MUTATION_LOGIN,
 } from "../apollo/mutation/user";
+import { store } from "react-notifications-component";
 
 const LogoName = styled.span`
   color: ${(props) => props.theme.login.CardFontColor};
@@ -54,6 +55,7 @@ const Auth = () => {
     reset,
     setError,
     getValues,
+    setValue,
     clearErrors,
   } = useForm({
     mode: "onChange",
@@ -65,12 +67,25 @@ const Auth = () => {
   };
 
   const disableLoginHandle = () => {
-    reset();
+    setValue("username", "");
+    setValue("name", "");
+    setValue("email", "");
+    setValue("password", "");
     disableLoginMode();
   };
 
   const signupCompleted = () => {
     const { username, password } = getValues();
+    store.addNotification({
+      title: "✅",
+      message: `${username}님의 계정이 생성되었습니다.`,
+      type: "success",
+      container: "top-center",
+      dismiss: {
+        duration: 3000,
+        onScreen: true,
+      },
+    });
     reset({ username, password });
     enableLoginMode();
   };
@@ -84,6 +99,17 @@ const Auth = () => {
       return;
     }
     if (token) {
+      const { username } = getValues();
+      store.addNotification({
+        title: "✅",
+        message: `${username}님 로그인 되었습니다.`,
+        type: "success",
+        container: "top-center",
+        dismiss: {
+          duration: 3000,
+          onScreen: true,
+        },
+      });
       logIn(token);
     }
   };
