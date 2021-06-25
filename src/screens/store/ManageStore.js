@@ -18,7 +18,7 @@ import { Loader } from "../../components/Loader";
 import SailChart from "../../components/ManageStore/SailChart";
 import Employees from "../../components/ManageStore/Employees";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-
+import { store } from "react-notifications-component";
 const StoreInfo = styled.div`
   width: 100%;
   display: flex;
@@ -138,6 +138,20 @@ const ManageStore = () => {
           },
         },
       ],
+      onCompleted: (data) => {
+        if (data.createDailySail.ok) {
+          store.addNotification({
+            title: "✅",
+            message: `오늘의 일매출이 등록되었습니다.`,
+            type: "success",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        }
+      },
     }
   );
 
@@ -176,6 +190,20 @@ const ManageStore = () => {
           },
         },
       ],
+      onCompleted: (data) => {
+        if (data.deleteDailySail.ok) {
+          store.addNotification({
+            title: "✅",
+            message: `오늘의 일매출이 삭제되었습니다.`,
+            type: "success",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        }
+      },
     }
   );
   useEffect(() => {

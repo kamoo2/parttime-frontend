@@ -11,6 +11,7 @@ import Wrapper from "../../components/createStore/Wrapper";
 import { Loader } from "../../components/Loader";
 import Content from "../../components/profile/Content";
 import { PhoneRegex } from "../../regaxs";
+import { store as storeC } from "react-notifications-component";
 
 const InputItems = styled.div`
   display: grid;
@@ -93,6 +94,16 @@ const CreateStore = () => {
       createStore: { ok, error, store },
     } = data;
     if (ok) {
+      storeC.addNotification({
+        title: "✅",
+        message: `${store.store}이 생성되었습니다.`,
+        type: "success",
+        container: "top-center",
+        dismiss: {
+          duration: 3000,
+          onScreen: true,
+        },
+      });
       history.push(`/store/${store.id}`);
     } else {
       setError("result", { message: error });

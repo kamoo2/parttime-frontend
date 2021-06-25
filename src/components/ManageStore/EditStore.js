@@ -10,6 +10,7 @@ import {
 } from "../../apollo/queries/store";
 import { PhoneRegex } from "../../regaxs";
 import FormError from "../auth/FormError";
+import { store as storeC } from "react-notifications-component";
 
 const PhotoItemWrapper = styled.div`
   display: flex;
@@ -131,6 +132,7 @@ const EditStore = ({
     handleSubmit,
     clearErrors,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -150,6 +152,21 @@ const EditStore = ({
         { query: QUERY_SEE_STORE, variables: { id } },
         { query: MY_STORES_QUERY, variables: { page: 1 } },
       ],
+      onCompleted: (data) => {
+        const { store } = getValues();
+        if (data.updateStore.ok) {
+          storeC.addNotification({
+            title: "✅",
+            message: `${store}의 정보가 변경되었습니다.`,
+            type: "success",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        }
+      },
     }
   );
 

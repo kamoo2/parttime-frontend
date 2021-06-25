@@ -5,10 +5,11 @@ import styled from "styled-components";
 import { CREATE_EMPLOYEE_MUTATION } from "../../apollo/mutation/employee";
 import { SEE_EMPLOYEES_QUERY } from "../../apollo/queries/employee";
 import { darkModeVar } from "../../apollo/vars";
-import { PhoneRegex } from "../../regaxs";
+import { onlyNumberRegex, PhoneRegex } from "../../regaxs";
 import FormError from "../auth/FormError";
 import EmployeeCard from "./EmployeeCard";
 import { Loader } from "../Loader";
+import { store as storeC } from "react-notifications-component";
 
 const CreateEmployee = styled.div`
   width: 100%;
@@ -99,7 +100,9 @@ const EmployeeForm = ({ storeId }) => {
     watch,
     setError,
     setValue,
+    getValues,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm();
   const [previewImage, setPreviewImage] = useState();
@@ -114,9 +117,22 @@ const EmployeeForm = ({ storeId }) => {
         },
       ],
       onCompleted: (data) => {
+        const { name } = getValues();
         if (!data.createEmployee.ok) {
           setError("result", { message: data.createEmployee.error });
+        } else {
+          storeC.addNotification({
+            title: "✅",
+            message: `${name}님이 생성되었습니다.`,
+            type: "success",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
         }
+        reset();
       },
     });
   const onSubmitValid = (data) => {
@@ -197,7 +213,13 @@ const EmployeeForm = ({ storeId }) => {
                 </select>
                 <InputBox>
                   <input
-                    {...register("age", { required: "나이를 입력해주세요." })}
+                    {...register("age", {
+                      required: "나이를 입력해주세요.",
+                      pattern: {
+                        value: onlyNumberRegex,
+                        message: "숫자만 입력해주세요",
+                      },
+                    })}
                     type="text"
                     placeholder="나이"
                   />
@@ -205,7 +227,13 @@ const EmployeeForm = ({ storeId }) => {
                 </InputBox>
                 <InputBox>
                   <input
-                    {...register("wage", { required: "시급을 입력해주세요." })}
+                    {...register("wage", {
+                      required: "시급을 입력해주세요.",
+                      pattern: {
+                        value: onlyNumberRegex,
+                        message: "숫자만 입력해주세요",
+                      },
+                    })}
                     type="text"
                     placeholder="시급"
                   />

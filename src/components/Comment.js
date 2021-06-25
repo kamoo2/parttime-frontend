@@ -4,6 +4,8 @@ import { useMutation } from "@apollo/client";
 import { DELETE_COMMENT_MUTATION } from "../apollo/mutation/comment";
 import { SEE_COMMENTS_QUERY } from "../apollo/queries/comment";
 import { QUERY_SEE_STORE } from "../apollo/queries/store";
+import { store } from "react-notifications-component";
+
 const SComment = styled.div`
   display: flex;
   align-items: center;
@@ -46,6 +48,20 @@ const Comment = ({ comment, storeId }) => {
         { query: SEE_COMMENTS_QUERY, variables: { storeId } },
         { query: QUERY_SEE_STORE, variables: { id: storeId } },
       ],
+      onCompleted: (data) => {
+        if (data.deleteComment.ok) {
+          store.addNotification({
+            title: "✅",
+            message: `${comment.user.username}님의 댓글이 삭제되었습니다.`,
+            type: "success",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        }
+      },
     }
   );
   return (

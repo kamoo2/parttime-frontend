@@ -9,6 +9,7 @@ import FormError from "../auth/FormError";
 import Wrapper from "../createStore/Wrapper";
 import AvatarEdit from "./AvatarEdit";
 import Content from "./Content";
+import { store } from "react-notifications-component";
 
 const InputItems = styled.div`
   display: grid;
@@ -70,6 +71,7 @@ function EditInfoForm({ id, username, name, phoneNumber, email, avatarURL }) {
     formState: { errors },
     setError,
     clearErrors,
+    getValues,
   } = useForm({ mode: "onChange" });
 
   const onSubmitEditProfile = (newData) => {
@@ -91,7 +93,18 @@ function EditInfoForm({ id, username, name, phoneNumber, email, avatarURL }) {
     });
   };
   const onCompleted = (data) => {
+    const { username } = getValues();
     if (data?.editProfile?.ok) {
+      store.addNotification({
+        title: "✅",
+        message: `${username}님의 정보가 변경되었습니다.`,
+        type: "success",
+        container: "top-center",
+        dismiss: {
+          duration: 3000,
+          onScreen: true,
+        },
+      });
       history.push(`/users/${data?.editProfile?.id}`);
     } else {
       setError("result", { message: data?.editProfile?.error });

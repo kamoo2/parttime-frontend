@@ -11,6 +11,7 @@ import {
 } from "react-icons/ri";
 import Popup from "reactjs-popup";
 import EditStore from "./ManageStore/EditStore";
+import { store as storeC } from "react-notifications-component";
 const PhotoItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -129,6 +130,16 @@ const StoreItem = ({ store, id }) => {
   const history = useHistory();
   const onCompleted = (data) => {
     if (data.deleteStore.ok) {
+      storeC.addNotification({
+        title: "✅",
+        message: `${store.store}이 삭제되었습니다.`,
+        type: "success",
+        container: "top-center",
+        dismiss: {
+          duration: 3000,
+          onScreen: true,
+        },
+      });
       history.push(routes.home);
     }
   };
@@ -224,6 +235,19 @@ const StoreItem = ({ store, id }) => {
       <Header>
         <HeaderTitle>{store.store}</HeaderTitle>
       </Header>
+      <SubHeader>
+        <Category>{store.category.name}</Category>
+        <Holidays>
+          {store.holidays.map((holiday) => {
+            return <Holiday key={holiday.id}>{holiday.name}</Holiday>;
+          })}
+        </Holidays>
+        <Rules>
+          {store.rules.map((rule) => {
+            return <Rule key={rule.id}>{rule.name}</Rule>;
+          })}
+        </Rules>
+      </SubHeader>
       <Body>
         <ReactImageGallery items={images} />
       </Body>

@@ -16,6 +16,7 @@ import { store } from "react-notifications-component";
 import { confirmAlert } from "react-confirm-alert";
 import WorkdayCheck from "./WorkdayCheck";
 
+import { onlyNumberRegex, PhoneRegex } from "../../regaxs";
 const SEmployeeCard = styled.div`
   width: 100%;
   padding: 70px 10px;
@@ -151,8 +152,14 @@ const EmployeeCard = ({
       ? "/images/dark_avatar.png"
       : "/images/avatar.png"
   );
-  const { register, handleSubmit, setValue } = useForm({
-    mode: "onChange",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    clearErrors,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       name,
       sex,
@@ -160,6 +167,7 @@ const EmployeeCard = ({
       wage,
       phoneNumber,
     },
+    mode: "onSubmit",
   });
   const [updateEmployeeMutation, { loading }] = useMutation(
     UPDATE_EMPLOYEE_MUTATION,
@@ -172,6 +180,32 @@ const EmployeeCard = ({
           },
         },
       ],
+      onCompleted: (data) => {
+        const { name } = getValues();
+        if (data.updateEmployee.ok) {
+          store.addNotification({
+            title: "✅",
+            message: `${name} 님의 정보가 수정되었습니다.`,
+            type: "default",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        } else {
+          store.addNotification({
+            title: "🚫",
+            message: data.updateEmployee.error,
+            type: "danger",
+            container: "top-center",
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        }
+      },
     }
   );
 
@@ -188,20 +222,32 @@ const EmployeeCard = ({
         },
       },
     ],
+    onCompleted: (data) => {
+      if (data?.deleteEmployee?.ok) {
+        store.addNotification({
+          title: "✅",
+          message: `${name}님이 삭제되었습니다.`,
+          type: "success",
+          container: "top-center",
+          dismiss: {
+            duration: 3000,
+            onScreen: true,
+          },
+        });
+      }
+    },
   });
 
   const onSubmitValid = (data) => {
     if (loading) {
       return;
     }
-    const newAge = parseInt(data.age);
-    const newWage = parseInt(data.wage);
     updateEmployeeMutation({
       variables: {
         id,
         ...(name !== data.name && { name: data.name }),
-        ...(age !== newAge && { age: newAge }),
-        ...(wage !== newWage && { wage: newWage }),
+        ...(age !== parseInt(data.age) && { age: parseInt(data.age) }),
+        ...(wage !== parseInt(data.wage) && { wage: parseInt(data.wage) }),
         ...(sex !== data.sex && { sex: data.sex }),
         ...(phoneNumber !== data.phoneNumber && {
           phoneNumber: data.phoneNumber,
@@ -209,15 +255,32 @@ const EmployeeCard = ({
         ...(data.file.length === 1 && { file: data.file[0] }),
       },
     });
-    store.addNotification({
-      title: "✅",
-      message: `${name}님의 정보가 변경되었습니다.`,
-      type: "default",
-      container: "bottom-center",
-      dismiss: {
-        duration: 3000,
-      },
-    });
+  };
+
+  const onSubmitInvalid = () => {
+    if (errors?.age) {
+      store.addNotification({
+        title: "🚫",
+        message: `나이는 ${errors?.age?.message}`,
+        type: "danger",
+        container: "top-center",
+        dismiss: {
+          duration: 3000,
+          onScreen: true,
+        },
+      });
+    } else if (errors?.wage) {
+      store.addNotification({
+        title: "🚫",
+        message: `시급은 ${errors?.wage?.message}`,
+        type: "danger",
+        container: "top-center",
+        dismiss: {
+          duration: 3000,
+          onScreen: true,
+        },
+      });
+    }
   };
 
   const readImage = (input) => {
@@ -239,15 +302,6 @@ const EmployeeCard = ({
           label: "확인",
           onClick: () => {
             deleteEmployeeMutation();
-            store.addNotification({
-              title: "✅",
-              message: `${name}님이 삭제되었습니다.`,
-              type: "success",
-              container: "bottom-center",
-              dismiss: {
-                duration: 3000,
-              },
-            });
           },
         },
         {
@@ -256,6 +310,13 @@ const EmployeeCard = ({
       ],
     });
   };
+  const phoneNumberRef = register("phoneNumber", {
+    required: "전화번호를 입력해주세요.",
+    pattern: {
+      value: PhoneRegex,
+      message: "xxx-xxxx-xxxx 양식에 맞게 입력해주세요.",
+    },
+  });
 
   return (
     <SEmployeeCard>
@@ -316,7 +377,7 @@ const EmployeeCard = ({
             {(close) => (
               <FormBox>
                 <InputCard>
-                  <form onSubmit={handleSubmit(onSubmitValid)}>
+                  <form onSubmit={handleSubmit(onSubmitValid, onSubmitInvalid)}>
                     <div>
                       <label htmlFor="avatar2">
                         <Avatar src={preview} />
@@ -347,6 +408,10 @@ const EmployeeCard = ({
                       <input
                         {...register("age", {
                           required: "나이를 입력해주세요.",
+                          pattern: {
+                            value: onlyNumberRegex,
+                            message: "숫자만 입력해주세요.",
+                          },
                         })}
                         type="text"
                         placeholder="나이"
@@ -354,18 +419,23 @@ const EmployeeCard = ({
                       <input
                         {...register("wage", {
                           required: "시급을 입력해주세요.",
+                          pattern: {
+                            value: onlyNumberRegex,
+                            message: "숫자만 입력해주세요.",
+                          },
                         })}
                         type="text"
                         placeholder="시급"
                       />
                       <input
-                        {...register("phoneNumber", {
-                          required: "전화번호를 입력해주세요.",
-                        })}
+                        {...phoneNumberRef}
                         type="text"
                         placeholder="전화번호"
+                        onChange={(e) => {
+                          clearErrors("result");
+                          phoneNumberRef.onChange(e);
+                        }}
                       />
-
                       <Button type="submit">확인</Button>
                     </div>
                   </form>

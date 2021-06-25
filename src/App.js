@@ -16,8 +16,8 @@ function App() {
 
   return (
     <ApolloProvider client={client}>
+      <ReactNotification />
       <HelmetProvider>
-        <ReactNotification />
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
           <GlobalStyles />
           {isLoggedIn ? <LoggedInRouter /> : <LoggedOutRouter />}

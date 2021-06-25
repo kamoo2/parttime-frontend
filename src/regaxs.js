@@ -5,3 +5,5 @@ export const PwRegex =
   /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
 
 export const PhoneRegex = /^\d{3}-\d{3,4}-\d{4}$/;
+
+export const onlyNumberRegex = /^[0-9]/g;
