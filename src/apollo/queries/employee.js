@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-
 export const SEE_EMPLOYEES_QUERY = gql`
   query seeEmployees($storeId: Int!) {
     seeEmployees(storeId: $storeId) {
@@ -9,7 +8,6 @@ export const SEE_EMPLOYEES_QUERY = gql`
       sex
       wage
       phoneNumber
-      salary
       avatarURL
     }
   }
@@ -27,7 +25,6 @@ export const SEE_EMPLOYEE_QUERY = gql`
         wage
         sex
         phoneNumber
-        salary
         avatarURL
         workdays {
           id
@@ -40,6 +37,15 @@ export const SEE_EMPLOYEE_QUERY = gql`
           }
         }
       }
+    }
+  }
+`;
+
+export const SEE_SALARY_QUERY = gql`
+  query seeSalary($employeeId: Int!, $year: Int, $month: Int!) {
+    seeSalary(employeeId: $employeeId, year: $year, month: $month) {
+      salary
+      workdayOfMonth
     }
   }
 `;

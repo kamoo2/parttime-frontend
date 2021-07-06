@@ -17,6 +17,8 @@ const NoAvatar = styled.img`
 `;
 
 const Avatar = ({ url, exist }) => {
+  console.log(exist);
+  console.log(url);
   const isDarkMode = useReactiveVar(darkModeVar);
   return exist ? (
     <YesAvatar url={url} />

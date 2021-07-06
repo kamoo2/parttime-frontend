@@ -1,4 +1,4 @@
-import { useMutation, useReactiveVar } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import styled from "styled-components";
 import { HiPencilAlt, HiOutlineX } from "react-icons/hi";
 import { BiCalendarCheck } from "react-icons/bi";
@@ -6,12 +6,15 @@ import Popup from "reactjs-popup";
 import { darkModeVar } from "../../apollo/vars";
 import FieldBox from "../employee/FieldBox";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DELETE_EMPLOYEE_MUTATION,
   UPDATE_EMPLOYEE_MUTATION,
 } from "../../apollo/mutation/employee";
-import { SEE_EMPLOYEES_QUERY } from "../../apollo/queries/employee";
+import {
+  SEE_EMPLOYEES_QUERY,
+  SEE_SALARY_QUERY,
+} from "../../apollo/queries/employee";
 import { store } from "react-notifications-component";
 import { confirmAlert } from "react-confirm-alert";
 import WorkdayCheck from "./WorkdayCheck";
@@ -141,7 +144,6 @@ const EmployeeCard = ({
   wage,
   phoneNumber,
   avatarURL,
-  salary,
   list = "false",
 }) => {
   const isDarkMode = useReactiveVar(darkModeVar);
@@ -169,6 +171,21 @@ const EmployeeCard = ({
     },
     mode: "onSubmit",
   });
+  const [getSalary, { data }] = useLazyQuery(SEE_SALARY_QUERY, {
+    variables: {
+      employeeId: id,
+      month: new Date().getMonth() + 1,
+    },
+  });
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted && id) {
+      getSalary();
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [getSalary]);
   const [updateEmployeeMutation, { loading }] = useMutation(
     UPDATE_EMPLOYEE_MUTATION,
     {
@@ -340,7 +357,7 @@ const EmployeeCard = ({
         {list === "true" ? (
           <FieldBox
             name="월급"
-            value={`${parseInt(salary).toLocaleString()}원`}
+            value={`${data?.seeSalary?.salary.toLocaleString()}원`}
           />
         ) : null}
       </FieldContainer>
@@ -357,12 +374,7 @@ const EmployeeCard = ({
             position="center"
           >
             {(close) => (
-              <WorkdayCheck
-                storeId={storeId}
-                employeeId={id}
-                salary={salary}
-                name={name}
-              />
+              <WorkdayCheck storeId={storeId} employeeId={id} name={name} />
             )}
           </StyledPopup>
           <StyledPopup

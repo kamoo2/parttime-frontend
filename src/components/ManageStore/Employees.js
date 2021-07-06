@@ -66,7 +66,6 @@ const Employees = ({ storeId }) => {
                   wage={emp.wage}
                   avatarURL={emp.avatarURL}
                   list="true"
-                  salary={emp.salary}
                   storeId={storeId}
                 />
               </PaddingWrap>
