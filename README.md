@@ -4,7 +4,7 @@
 
 ### 🔥 V1 개선사항
 
-**1. 캘린더에서 월별로 넘어갈 때 마다 해당 월의 월급 출력 되도록 구현**
+**1. 캘린더에서 월별로 넘어갈 때 마다 해당 월의 월급 출력 되도록 구현✅**
 
 > 현재 6월에서 7월로 넘어가면 6월에는 월급이 얼마였는지
 > 보이지 않는다. 7월이 되어서 버그 발견...👀
@@ -18,6 +18,14 @@
 급여를 graphql의 Computed Field를 이용해서 계산했었는데 이렇게 했을 때 년,월 별로 급여를 받을 수 가없었다.
 그래서 새로운 Schema인 seeSalary를 구현했다.
 `Query : seeSalary(employeeId:Int!,year:Int,month:Int!)`
+
+### 6월 달력 UI
+
+<img width="883" alt="스크린샷 2021-07-07 오전 12 59 45" src="https://user-images.githubusercontent.com/78653601/124632250-240ec680-debf-11eb-90bd-1084e41e27b7.png">
+
+### 7월 달력 UI
+
+<img width="894" alt="스크린샷 2021-07-07 오전 12 59 53" src="https://user-images.githubusercontent.com/78653601/124632542-689a6200-debf-11eb-8f43-40a27cb06f3a.png">
 
 **2. 근무시간 등록 및 출근 UI 개선**
 
