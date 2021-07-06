@@ -174,6 +174,7 @@ const EmployeeCard = ({
   const [getSalary, { data }] = useLazyQuery(SEE_SALARY_QUERY, {
     variables: {
       employeeId: id,
+      year: new Date().getFullYear(),
       month: new Date().getMonth() + 1,
     },
   });
@@ -185,7 +186,7 @@ const EmployeeCard = ({
     return () => {
       isMounted = false;
     };
-  }, [getSalary]);
+  }, [getSalary, id]);
   const [updateEmployeeMutation, { loading }] = useMutation(
     UPDATE_EMPLOYEE_MUTATION,
     {
